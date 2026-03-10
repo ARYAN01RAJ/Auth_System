@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
+const { boolean } = require("zod");
 
-mongoose.connect("process.env.MONGO_URI")
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB connected"))
+.catch(err => console.log("MongoDB error:", err));
+
 
 const AdminSchema = new mongoose.Schema({
     email: String,
-    password: String
+    password: String,
+    verificationToken: String,
+    isVerified: Boolean
 });
 
 const UserSchema = new mongoose.Schema({

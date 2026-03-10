@@ -2,22 +2,27 @@ const Router = require("express");
 const router = Router();
 const bcrypt = require("bcrypt");
 const { Admin } = require("../db");
-const jwtPassword = 'hello';
+const jwtPassword = process.env.JWT_SECRET;
+const { sendEmail } = require("../services/emailService");
+const crypto = require("crypto");
 
 
 router.post("/signup", async (req,res)=>{
-    const email = req.body.email;
-    const password = req.body.password;
-    const hash = await bcrypt.hash(password,10);//this hashesh the password and then we store it in db.
-    const user = new Admin({
-        email: email,
-        password: hash
-    })
-    await user.save();
-    res.json({
-        msg: "Admin created successfully"
-    })
-})
+  const { email, password } = req.body;
+  const hash = await bcrypt.hash(password,10);
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const user = new Admin({
+    email,
+    password: hash,
+    verificationToken,
+    isVerified: false
+  });
+  
+  await user.save();
+  res.json({
+    msg: "Signup successful. Check your email."
+  });
+});
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -28,6 +33,11 @@ router.post("/login", async (req, res) => {
   const isMatch = await bcrypt.compare(password, user.password);//it, converts the given password and converts it into hash behind the table and compares and then returns a boolean value.
   if (!isMatch) {
     return res.status(401).json({ message: "Invalid password" });
+  }
+  if (!user.isVerified) {
+    return res.status(403).json({
+      message: "Please verify your email"
+    });
   }
   const token = jwt.sign(
     { email: email },
