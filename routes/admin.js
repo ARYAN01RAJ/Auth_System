@@ -6,6 +6,7 @@ const { Admin } = require("../db");
 const jwtPassword = process.env.JWT_SECRET;
 const { sendEmail } = require("../services/emailService");
 const crypto = require("crypto");
+const { adminMiddleware } = require("../middleware/adminMiddleware");
 
 
 router.post("/signup", async (req,res)=>{
@@ -17,7 +18,8 @@ router.post("/signup", async (req,res)=>{
     email,
     password: hash,
     verificationToken,
-    isVerified: false
+    isVerified: false,
+    resetToken: null
   });
   
   await admin.save();
@@ -66,11 +68,59 @@ router.post("/login", async (req, res) => {
   const token = jwt.sign(
     { email: email },
     jwtPassword,
-    { expiresIn: "1m" }
+    { expiresIn: "5m" }
   );
   res.status(200).json({ token });
 
 });
+
+router.post("/forgot-password", async (req,res)=>{
+  const { email } = req.body;
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  const link = `http://localhost:3000/admin/reset-password?token=${resetToken}`;
+  const admin = await Admin.findOne({email: email});
+  admin.resetToken = resetToken;
+  admin.password = null;
+  await admin.save();
+  await sendEmail(
+    email,
+    "reset password",
+    `Click this link to reset password ${link}`
+  )
+  res.status(200).json({
+    msg: "check your mail for reset link"
+  });
+})
+
+router.post("/reset-password", async (req,res)=>{
+  const resetToken = req.query.token;
+  const password = req.body.password;
+  const hash = await bcrypt.hash(password,10);
+  const admin = await Admin.findOne({resetToken: resetToken});
+  if(admin){
+    admin.password = hash;
+    admin.resetToken = null;
+    await admin.save();
+    res.status(200).json({
+      msg: "Password updated successfully"
+    })
+  }else{
+    res.status(400).json({
+      msg: "User does not exist"
+    });
+  }
+})
+
+router.get("/profile",adminMiddleware,async (req,res)=>{
+  const email = req.admin.email;
+
+  const admin = await Admin.findOne({ email });
+
+  res.json({
+      email: admin.email,
+      message: "You are authenticated"
+  });
+})
 
 
 module.exports = router;

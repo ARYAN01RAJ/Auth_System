@@ -10,7 +10,8 @@ const AdminSchema = new mongoose.Schema({
     email: String,
     password: String,
     verificationToken: String,
-    isVerified: Boolean
+    isVerified: Boolean,
+    resetToken: String
 });
 
 const UserSchema = new mongoose.Schema({
