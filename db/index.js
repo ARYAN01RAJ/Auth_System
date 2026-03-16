@@ -16,7 +16,10 @@ const AdminSchema = new mongoose.Schema({
 
 const UserSchema = new mongoose.Schema({
     email: String,
-    password: String
+    password: String,
+    verificationToken: String,
+    isVerified: Boolean,
+    resetToken: String
 })
 
 const Admin = mongoose.model("Admin",AdminSchema);
