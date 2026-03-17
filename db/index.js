@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { boolean } = require("zod");
 
 mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB connected"))
@@ -7,7 +6,11 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 const AdminSchema = new mongoose.Schema({
-    email: String,
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
     password: String,
     verificationToken: String,
     isVerified: Boolean,
@@ -15,7 +18,11 @@ const AdminSchema = new mongoose.Schema({
 });
 
 const UserSchema = new mongoose.Schema({
-    email: String,
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
     password: String,
     verificationToken: String,
     isVerified: Boolean,

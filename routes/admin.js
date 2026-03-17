@@ -2,7 +2,7 @@ const Router = require("express");
 const router = Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { Admin } = require("../db");
+const { Admin, User } = require("../db");
 const jwtPassword = process.env.JWT_SECRET;
 const { sendEmail } = require("../services/emailService");
 const crypto = require("crypto");
@@ -11,6 +11,12 @@ const { adminMiddleware } = require("../middleware/adminMiddleware");
 
 router.post("/signup", async (req,res)=>{
   const { email, password } = req.body;
+  const existingUser = await Admin.findOne({email});
+  if(existingUser){
+    return res.status(409).json({
+      msg: "Admin already exist"
+    });
+  }
   const hash = await bcrypt.hash(password,10);
   const verificationToken = crypto.randomBytes(32).toString("hex");
   const link = `http://localhost:3000/admin/verify-email?token=${verificationToken}`;
@@ -66,7 +72,7 @@ router.post("/login", async (req, res) => {
     });
   }
   const token = jwt.sign(
-    { email: email },
+    { adminId: admin._id },
     jwtPassword,
     { expiresIn: "5m" }
   );
@@ -76,11 +82,15 @@ router.post("/login", async (req, res) => {
 
 router.post("/forgot-password", async (req,res)=>{
   const { email } = req.body;
+  const admin = await Admin.findOne({email: email});
+  if(!admin){
+    return res.status(404).json({
+      msg: "Admin does not exist"
+    });
+  }
   const resetToken = crypto.randomBytes(32).toString("hex");
   const link = `http://localhost:3000/admin/reset-password?token=${resetToken}`;
-  const admin = await Admin.findOne({email: email});
   admin.resetToken = resetToken;
-  admin.password = null;
   await admin.save();
   await sendEmail(
     email,
@@ -95,6 +105,11 @@ router.post("/forgot-password", async (req,res)=>{
 router.post("/reset-password", async (req,res)=>{
   const resetToken = req.query.token;
   const password = req.body.password;
+  if(!password){
+    return res.status(400).json({
+      msg: "No password given. Give the updated password"
+    })
+  }
   const hash = await bcrypt.hash(password,10);
   const admin = await Admin.findOne({resetToken: resetToken});
   if(admin){
@@ -112,9 +127,14 @@ router.post("/reset-password", async (req,res)=>{
 })
 
 router.get("/profile",adminMiddleware,async (req,res)=>{
-  const email = req.admin.email;
+  const adminId = req.admin.adminId;
 
-  const admin = await Admin.findOne({ email });
+  const admin = await Admin.findById(adminId);
+  if(!admin){
+    return res.status(404).json({
+      msg: "Admin does not exist"
+    })
+  }
 
   res.json({
       email: admin.email,
