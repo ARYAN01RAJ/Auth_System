@@ -11,7 +11,10 @@ const AdminSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    password: String,
+    password: {
+        type: String,
+        required: true
+    },
     verificationToken: String,
     isVerified: Boolean,
     resetToken: String
@@ -23,7 +26,10 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    password: String,
+    password: {
+        type: String,
+        required: true
+    },
     verificationToken: String,
     isVerified: Boolean,
     resetToken: String
