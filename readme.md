@@ -4,9 +4,9 @@ A complete backend authentication system supporting **User and Admin roles**, fe
 
 ---
 
-## 🚀 Features
+## Features
 
-### 👤 User Authentication
+### User Authentication
 - User Signup
 - Email Verification (via token)
 - Login with JWT
@@ -14,7 +14,7 @@ A complete backend authentication system supporting **User and Admin roles**, fe
 - Forgot Password (email-based)
 - Reset Password
 
-### 🛠 Admin Authentication
+### Admin Authentication
 - Admin Signup
 - Email Verification
 - Login with JWT
@@ -22,7 +22,7 @@ A complete backend authentication system supporting **User and Admin roles**, fe
 - Forgot Password
 - Reset Password
 
-### 🔐 Security Features
+### Security Features
 - Password hashing using **bcrypt**
 - JWT authentication & authorization
 - Email verification tokens
@@ -32,7 +32,7 @@ A complete backend authentication system supporting **User and Admin roles**, fe
 
 ---
 
-## 🧱 Tech Stack
+## Tech Stack
 
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB (Mongoose)
@@ -42,7 +42,7 @@ A complete backend authentication system supporting **User and Admin roles**, fe
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 project-root
@@ -68,7 +68,7 @@ project-root
 
 ---
 
-## ⚙️ Environment Variables
+## Environment Variables
 
 Create a `.env` file in the root directory:
 
@@ -81,9 +81,9 @@ USER_JWT_SECRET=user_jwt_secret
 
 ---
 
-## 📌 API Endpoints
+## API Endpoints
 
-### 👤 User Routes
+### User Routes
 
 | Method | Endpoint | Description |
 |------|----------|-------------|
@@ -96,7 +96,7 @@ USER_JWT_SECRET=user_jwt_secret
 
 ---
 
-### 🛠 Admin Routes
+### Admin Routes
 
 | Method | Endpoint | Description |
 |------|----------|-------------|
@@ -109,7 +109,7 @@ USER_JWT_SECRET=user_jwt_secret
 
 ---
 
-## 🔑 Authentication Flow
+## Authentication Flow
 
 ### Signup Flow
 1. User/Admin registers
@@ -131,7 +131,7 @@ USER_JWT_SECRET=user_jwt_secret
 
 ---
 
-## 🔒 Middleware
+## Middleware
 
 ### User Middleware
 - Verifies JWT from headers
@@ -143,7 +143,7 @@ USER_JWT_SECRET=user_jwt_secret
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Use tools like:
 - Postman
@@ -164,7 +164,7 @@ Body:
 
 ---
 
-## ⚠️ Known Improvements (Future Enhancements)
+## Known Improvements (Future Enhancements)
 
 - Add reset token expiry
 - Add rate limiting (prevent brute force attacks)
@@ -174,13 +174,13 @@ Body:
 
 ---
 
-## 📌 Author
+## Author
 
 Aryan Raj
 
 ---
 
-## 🏁 Conclusion
+## Conclusion
 
 This is a **production-style authentication backend** covering:
 - Secure login system
